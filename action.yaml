@@ -1,0 +1,44 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-action.json
+---
+name: Create Commit
+author: W Anders <w@doubleu.codes>
+description: Commit and push files to a repository
+inputs:
+  branch:
+    description: |
+      Target branch files will be commited to. Defaults to the checked out
+      branch.
+  delete_files:
+    description: |
+      A newline-delimited list of files to delete in this commit. Files that are
+      noton the target branch are logged and ignored.
+  files:
+    required: true
+    description: |
+      A newline-delimited list of files add or modify in this commit. Files
+      listed that are not modified will no appear in the commit.
+  message:
+    description: |
+      Commit message. Default:
+        committed files
+
+        created  [ list of created files ]
+        modified [ list of modified files ]
+        deleted  [ list of deleted files ]
+  message_file:
+    description: |
+      A text file containing the commit message. Fails if file does not exist.
+  repository:
+    description: |
+      The repository to commit files to. Must be formatted as
+      'OWNER/REPOSITORY'. Defaults to 'env.GITHUB_REPOSITORY'.
+  token:
+    description: |
+      A token is used to interact wit the Github API. Defaults to
+      'env.GITHUB_TOKEN'.
+runs:
+  using: node16
+  main: dist/index.js
+branding:
+  icon: git-commit
+  color: purple
