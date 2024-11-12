@@ -52,8 +52,8 @@ function base58Encode(input: string | Uint8Array): string {
     input = new Uint8Array(input.split('').map((c) => c.charCodeAt(0)));
 
   let hex = '';
-  for (let i = 0; i < input.length; i++) {
-    hex += input[i].toString(16).padStart(2, '0');
+  for (const c of input) {
+    hex += c.toString(16).padStart(2, '0');
   }
 
   let x = BigInt('0x' + hex);
