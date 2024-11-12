@@ -122,8 +122,8 @@ export async function createCommit(
 
   const fileChanges: CommitFileChangesType = {};
   if (
-    fileActions.createFiles != undefined ||
-    fileActions.modifyFiles != undefined
+    fileActions.createFiles !== undefined ||
+    fileActions.modifyFiles !== undefined
   ) {
     // if the commit contains additions or modifications, initialize the
     //  expected additions array.
@@ -133,7 +133,7 @@ export async function createCommit(
   // populate the additions array. create and modify are only separate for
   //  purposes of generating the default commit message. new and modified files
   //  are handled by the graphql request identically.
-  if (fileActions.createFiles != undefined) {
+  if (fileActions.createFiles !== undefined) {
     for (const file of fileActions.createFiles) {
       (fileChanges.additions as CommitFileChangeType[]).push({
         path: file,
@@ -141,7 +141,7 @@ export async function createCommit(
       });
     }
   }
-  if (fileActions.modifyFiles != undefined) {
+  if (fileActions.modifyFiles !== undefined) {
     for (const file of fileActions.modifyFiles) {
       (fileChanges.additions as CommitFileChangeType[]).push({
         path: file,
@@ -150,7 +150,7 @@ export async function createCommit(
     }
   }
 
-  if (fileActions.deleteFiles != undefined) {
+  if (fileActions.deleteFiles !== undefined) {
     // if any files are to be deleted, initialize the deletions array and
     //  populate it
     fileChanges.deletions = new Array<CommitFileChangeType>();
@@ -194,7 +194,7 @@ export async function createCommit(
   //  into the response type and throw an error containing an array of error
   //  messages. this is encountered if the branch does not exist, or the HEAD
   //  OID is not the HEAD of the target branch.
-  if (execRequest.errors != undefined) {
+  if (execRequest.errors !== undefined) {
     const messages = new Array<string>();
     for (const error of execRequest.errors) {
       messages.push(error.message);

@@ -145,7 +145,7 @@ export async function getRepoFiles(
     if (fileResult == null) createFiles.push(file);
   });
 
-  if (inputDeleteFiles.length != 0) {
+  if (inputDeleteFiles.length !== 0) {
     Object.keys(inputFilesDelete).map((file: string) => {
       const fileResult =
         request.data.repository.ref.target[inputFilesDelete[file]];
@@ -156,8 +156,8 @@ export async function getRepoFiles(
   }
 
   return {
-    createFiles: createFiles.length != 0 ? createFiles : undefined,
-    modifyFiles: modifyFiles.length != 0 ? modifyFiles : undefined,
-    deleteFiles: deleteFiles.length != 0 ? deleteFiles : undefined,
+    createFiles: createFiles.length !== 0 ? createFiles : undefined,
+    modifyFiles: modifyFiles.length !== 0 ? modifyFiles : undefined,
+    deleteFiles: deleteFiles.length !== 0 ? deleteFiles : undefined,
   };
 }

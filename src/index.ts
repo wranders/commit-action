@@ -55,17 +55,17 @@ function checkFilesExist(files: string[]) {
  */
 function generateDefaultCommitMessageBody(files: RepoFilesActionType): string {
   const out: string[] = new Array<string>();
-  if (files.createFiles != undefined) {
+  if (files.createFiles !== undefined) {
     for (const file of files.createFiles) {
       out.push(`created  '${file}'`);
     }
   }
-  if (files.modifyFiles != undefined) {
+  if (files.modifyFiles !== undefined) {
     for (const file of files.modifyFiles) {
       out.push(`modified '${file}'`);
     }
   }
-  if (files.deleteFiles != undefined) {
+  if (files.deleteFiles !== undefined) {
     for (const file of files.deleteFiles) {
       out.push(`deleted  '${file}'`);
     }

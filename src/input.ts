@@ -23,7 +23,7 @@ export function getInputBranch(): string {
 
   // if the action input and environment do not contain the name of the target
   //  branch, throw an error
-  if (input == '' && env == '') {
+  if (input === '' && env === '') {
     throw new Error(
       /* eslint-disable quotes */
       "branch could not be determined; input 'branch' not specified " +
@@ -33,7 +33,7 @@ export function getInputBranch(): string {
   }
 
   let out: string;
-  if (input != '') {
+  if (input !== '') {
     // if the input branch is specified, return it. the target branch specified
     //  by the action input takes precedence over the checked out branch defined
     //  in the environment
@@ -66,13 +66,13 @@ export function getInputCommitMessage(): CommitMessageType {
 
   // if both 'message' and 'message_file' inputs are defined, throw and error
   //  stating that this configuration is unsupported
-  if (inputMessage != '' && inputMessageFile != '') {
+  if (inputMessage !== '' && inputMessageFile !== '') {
     // eslint-disable-next-line quotes
     throw new Error("both 'message' and 'message_file' cannot be specified");
   }
 
   // if both 'message' and 'message_file' are empty, generate a default message
-  if (inputMessage == '' && inputMessageFile == '') {
+  if (inputMessage === '' && inputMessageFile === '') {
     // return base of default commit message
     debug('generating generic commit message');
     return {
@@ -80,18 +80,18 @@ export function getInputCommitMessage(): CommitMessageType {
       headline: 'committed files',
     };
   }
-  if (inputMessage != '') {
+  if (inputMessage !== '') {
     // compile input message as array of lines
     const lines: string[] = inputMessage.trim().split(/\n/g);
     // consume preceding empty lines
     for (const line of lines) {
-      if (line.trim() == '') {
+      if (line.trim() === '') {
         lines.shift();
         continue;
       }
       break;
     }
-    if (lines.length == 0) {
+    if (lines.length === 0) {
       // throw error if no non-empty lines remain in message
       throw new Error('commit message is empty');
     }
@@ -103,7 +103,7 @@ export function getInputCommitMessage(): CommitMessageType {
 
     // if any lines remain, join them into the commit message body
     const body = lines.join('\n').trim();
-    if (body != '') {
+    if (body !== '') {
       out.body = body;
     }
 
@@ -124,14 +124,14 @@ export function getInputCommitMessage(): CommitMessageType {
 
   // consume any preceding empty lines
   for (const line of lines) {
-    if (line.trim() == '') {
+    if (line.trim() === '') {
       lines.shift();
       continue;
     }
     break;
   }
 
-  if (lines.length == 0) {
+  if (lines.length === 0) {
     // throw error if no non-empty lines remain in message
     throw new Error('commit message is empty');
   }
@@ -143,7 +143,7 @@ export function getInputCommitMessage(): CommitMessageType {
 
   // rebuild and trim the remaining text as the commit message body
   const body: string = lines.join('\n').trim();
-  if (body != '') {
+  if (body !== '') {
     out.body = body;
   }
 
@@ -164,25 +164,25 @@ export function getInputDeleteFiles(): string[] {
 
   const out: string[] = new Array<string>();
 
-  if (input == '') {
+  if (input === '') {
     // if no files are specified, return and empty array
     return out;
   }
 
   // split list into lines and remove empty lines
-  const inputLines = input.split(/\n/g).filter((line) => line.trim() != '');
+  const inputLines = input.split(/\n/g).filter((line) => line.trim() !== '');
 
   for (const line of inputLines) {
     // check if entry is glob, returns single entry if single file is found,
     //  multiple files if entry is a glob
     const checkGlob: string[] = globSync(line);
 
-    if (checkGlob.length == 0) {
+    if (checkGlob.length === 0) {
       // listed file is not found
       throw new Error(`no input 'delete_file' found: ${line}`);
     }
 
-    if (checkGlob.length == 1) {
+    if (checkGlob.length === 1) {
       out.push(line);
       debug(`tracking input 'delete_file': ${line}`);
       continue;
@@ -196,7 +196,7 @@ export function getInputDeleteFiles(): string[] {
   }
 
   // if files are listed in the input, but none returned, throw error
-  if (out.length == 0) {
+  if (out.length === 0) {
     throw new Error(
       `no 'delete_files' could be parsed from input: '${JSON.stringify(
         input,
@@ -218,7 +218,7 @@ export function getInputFiles(): string[] {
   // load files from action input 'files', removing empty lines
   const input: string[] = getInput('files', { required: true })
     .split(/\n/g)
-    .filter((line) => line.trim() != '');
+    .filter((line) => line.trim() !== '');
 
   const out: string[] = new Array<string>();
 
@@ -227,12 +227,12 @@ export function getInputFiles(): string[] {
     //  multiple files if entry is a glob
     const checkGlob: string[] = globSync(line);
 
-    if (checkGlob.length == 0) {
+    if (checkGlob.length === 0) {
       // listed file not found
       throw new Error(`no input 'file' found: ${line}`);
     }
 
-    if (checkGlob.length == 1) {
+    if (checkGlob.length === 1) {
       out.push(line);
       debug(`tracking input 'file': ${line}`);
       continue;
@@ -246,7 +246,7 @@ export function getInputFiles(): string[] {
   }
 
   // if files are listed in the input, but none returned, throw error
-  if (out.length == 0) {
+  if (out.length === 0) {
     throw new Error(
       `no 'files' could be parsed from input: '${JSON.stringify(input)}'`,
     );
@@ -272,7 +272,7 @@ export function getInputRepository(): RepositoryType {
   const env: string = process.env.GITHUB_REPOSITORY;
 
   // if both action input and environment variable are empty, throw an error
-  if (input == '' && env == '') {
+  if (input === '' && env === '') {
     throw new Error(
       /* eslint-disable quotes */
       "repository could not be determined; input 'repository' not specified " +
@@ -283,9 +283,9 @@ export function getInputRepository(): RepositoryType {
 
   // if action input is provided, split the owner and repository name. if the
   //  input is not the expected OWNER/REPOSITORY format, throw an error
-  if (input != '') {
+  if (input !== '') {
     const [owner, repo] = input.split('/');
-    if (owner == '' || repo == '') {
+    if (owner === '' || repo === '') {
       throw new Error(
         `input 'repository' could not be parsed: '${input}'; ` +
           // eslint-disable-next-line quotes
@@ -305,7 +305,7 @@ export function getInputRepository(): RepositoryType {
   //  unexpected and the owner and repository name cannot be parsed, throw an
   //  error.
   const [owner, repo] = env.split('/');
-  if (owner == '' || repo == '') {
+  if (owner === '' || repo === '') {
     throw new Error(
       'GITHUB_REPOSITORY environment variable could not be interpreted',
     );
@@ -333,7 +333,7 @@ export function getInputToken(): string {
   const env: string = process.env.GITHUB_TOKEN;
 
   // if both the action input and environment variable are empty, throw an error
-  if (input == '' && env == '') {
+  if (input === '' && env === '') {
     throw new Error(
       // eslint-disable-next-line quotes
       "no token available; must set input 'token' or 'env.GITHUB_TOKEN'",
@@ -341,7 +341,7 @@ export function getInputToken(): string {
   }
 
   let out: string;
-  if (input != '') {
+  if (input !== '') {
     // eslint-disable-next-line quotes
     debug("input 'token' set from action input");
     out = input;
