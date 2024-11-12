@@ -37,7 +37,7 @@ inputs:
       A token is used to interact wit the Github API. Defaults to
       'env.GITHUB_TOKEN'.
 runs:
-  using: node16
+  using: node20
   main: dist/index.js
 branding:
   icon: git-commit
