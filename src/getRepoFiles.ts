@@ -2,14 +2,14 @@ import { debug, info } from '@actions/core';
 import { requestGraphQL } from './request';
 
 /**
- * Input files. Value is the base58-encoded file name
+ * An object containing file paths and their base58-encoded names.
  */
 type InputFilesType = {
   [key: string]: string;
 };
 
 /**
- * Stores each file path in its respective action category
+ * Stores each file path in its respective action category.
  */
 export type RepoFilesActionType = {
   createFiles?: string[];
@@ -18,7 +18,7 @@ export type RepoFilesActionType = {
 };
 
 /**
- * The structure of the GraphQL repository files response
+ * The structure of the GraphQL repository files response.
  */
 type RepoFilesQueryResponseType = {
   data: {
@@ -35,15 +35,15 @@ type RepoFilesQueryResponseType = {
 };
 
 /**
- * Base58-encode the input. This is used to encode the file names for unique
- *  entry keys in the GraphQL API repository files request.
+ * Base58 encode the file names so that keys in the GraphQL API request are
+ *  unique and do not contain problematic characters.
  *
  * @param input string or character bytes array
  *
  * @returns base58-encoded string
  */
 function base58Encode(input: string | Uint8Array): string {
-  const B58ALPHANUM =
+  const B58CHARACTERS =
     '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
 
   if (input.length === 0) return '';
@@ -62,18 +62,18 @@ function base58Encode(input: string | Uint8Array): string {
   while (x > 0) {
     const mod = Number(x % 58n);
     x = x / 58n;
-    output.push(B58ALPHANUM[mod]);
+    output.push(B58CHARACTERS[mod]);
   }
 
-  for (let i = 0; input[i] === 0; i++) output.push(B58ALPHANUM[0]);
+  for (let i = 0; input[i] === 0; i++) output.push(B58CHARACTERS[0]);
 
   return output.reverse().join('');
 }
 
 /**
- * Get file status in target branch from GraphQL API
+ * Get file status in the target branch from the GraphQL API.
  *
- * @param token secret to authenticate to the Github GraphQL API
+ * @param token secret to authenticate to the GitHub GraphQL API
  * @param owner repository owner
  * @param repo repository name
  * @param branch target branch
@@ -89,7 +89,6 @@ export async function getRepoFiles(
   inputCreateModifyFiles: string[],
   inputDeleteFiles: string[],
 ): Promise<RepoFilesActionType> {
-  // compile all specified files and base58-encode their file names
   const inputFilesCreateModify: InputFilesType = {};
   for (const file of inputCreateModifyFiles) {
     inputFilesCreateModify[file] = `_${base58Encode(file)}`;
@@ -99,7 +98,6 @@ export async function getRepoFiles(
     inputFilesDelete[file] = `_${base58Encode(file)}`;
   }
 
-  // construct graphql query entries for all specified files
   const queries: string[] = new Array<string>();
   Object.keys(inputFilesCreateModify).map((file: string) => {
     queries.push(`${inputFilesCreateModify[file]}:file(path:"${file}"){type}`);
@@ -109,7 +107,6 @@ export async function getRepoFiles(
   });
   const query: string = queries.join(',');
 
-  // build graphql request query
   const data = `{
     repository(owner:"${owner}", name:"${repo}") {
       ref(qualifiedName: "refs/heads/${branch}") {
@@ -121,19 +118,19 @@ export async function getRepoFiles(
   }`;
   debug(`request data: ${JSON.stringify(data)}`);
 
-  // execute the reques
+  // execute the request
   const request = await requestGraphQL<RepoFilesQueryResponseType>(token, {
     query: data,
   });
   debug(`request result: ${JSON.stringify(request)}`);
 
-  // organize files base on information returned from the api request.
-  // created files will not exist in the target branch, so will be 'null' in the
-  //  response
-  // modified files will exist in the target branch, so will have an object in
-  //  the response
-  // deleted files that exist in the target branch will not be null in the
-  //  response. deleted files that do not exist in the target branch will be
+  // Organize files based on information returned from the api request.
+  // Create files will not exist in the target branch, so will be 'null' in the
+  //  response.
+  // Modified files will exist in the target branch, so will have an object in
+  //  the response.
+  // Deleted files that exist in the target branch will not be 'null' in the
+  //  response. Deleted files that do not exist in the target branch will be
   //  null and not added to the output.
   const createFiles: string[] = new Array<string>();
   const modifyFiles: string[] = new Array<string>();

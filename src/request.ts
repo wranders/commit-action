@@ -1,9 +1,9 @@
-import { ClientRequest } from 'http';
-import { RequestOptions, request } from 'https';
-import { format } from 'util';
+import { ClientRequest } from 'node:http';
+import { RequestOptions, request } from 'node:https';
+import { format } from 'node:util';
 
 /**
- * GraphQL API request structure. Variables are used to submit the commit
+ * Structure of a GraphQL API request.
  */
 type GraphQLDataType = {
   query: string;
@@ -11,7 +11,8 @@ type GraphQLDataType = {
 };
 
 /**
- * Make a request to the Github GraphQL API
+ * Make a request to the GitHub GraphQL API.
+ *
  * @param token secret token to authenticate to the graphql api
  * @param data graphql request body
  * @returns unmarshalled graphql api response

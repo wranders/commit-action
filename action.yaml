@@ -11,7 +11,7 @@ inputs:
   delete_files:
     description: |
       A newline-delimited list of files to delete in this commit. Files that are
-      noton the target branch are logged and ignored.
+      not on the target branch are logged and ignored.
   files:
     required: true
     description: |
@@ -37,8 +37,8 @@ inputs:
       A token is used to interact wit the Github API. Defaults to
       'env.GITHUB_TOKEN'.
 runs:
-  using: node20
-  main: dist/index.js
+  using: node24
+  main: dist/index.cjs
 branding:
   icon: git-commit
   color: purple

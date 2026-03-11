@@ -1,5 +1,5 @@
 import { debug, info, setFailed } from '@actions/core';
-import { existsSync } from 'fs';
+import { existsSync } from 'node:fs';
 import {
   CommitMessageType,
   CreateCommitResponseType,
@@ -30,9 +30,10 @@ declare global {
 }
 
 /**
- * Check if a created or modified file exists
+ * Check if a created or modified file exists.
  *
- * @param files array of files relative to the current working directory
+ * @param files string array of file paths relative to the current working
+ *  directory
  *
  * @throws error if file does not exist
  */
@@ -74,48 +75,48 @@ function generateDefaultCommitMessageBody(files: RepoFilesActionType): string {
 }
 
 /**
- * Execute the action
+ * Execute the action.
+ *
+ * @returns Promise
  */
 async function main(): Promise<void> {
-  try {
-    const branch: string = getInputBranch();
-    const deleteFiles: string[] = getInputDeleteFiles();
-    const files: string[] = getInputFiles();
-    const message: CommitMessageType = getInputCommitMessage();
-    const repository: RepositoryType = getInputRepository();
-    const token: string = getInputToken();
+  const branch: string = getInputBranch();
+  const deleteFiles: string[] = getInputDeleteFiles();
+  const files: string[] = getInputFiles();
+  const message: CommitMessageType = getInputCommitMessage();
+  const repository: RepositoryType = getInputRepository();
+  const token: string = getInputToken();
 
-    checkFilesExist(files);
+  checkFilesExist(files);
 
-    const repoFilesAction: RepoFilesActionType = await getRepoFiles(
-      token,
-      repository.owner,
-      repository.repository,
-      branch,
-      files,
-      deleteFiles,
-    );
-    debug(`query response ${JSON.stringify(repoFilesAction)}`);
+  const repoFilesAction: RepoFilesActionType = await getRepoFiles(
+    token,
+    repository.owner,
+    repository.repository,
+    branch,
+    files,
+    deleteFiles,
+  );
+  debug(`query response ${JSON.stringify(repoFilesAction)}`);
 
-    if (message.default) {
-      message.body = generateDefaultCommitMessageBody(repoFilesAction);
-      debug(`default commit message body set: '${message.body}'`);
-    }
-
-    const resp: CreateCommitResponseType = await createCommit(
-      token,
-      repository.owner,
-      repository.repository,
-      branch,
-      message,
-      repoFilesAction,
-    );
-    debug(`commit response: ${JSON.stringify(resp)}`);
-    if (resp.data != null)
-      info(`commit success: ${resp.data.createCommitOnBranch.commit.url}`);
-  } catch (e) {
-    if (e instanceof Error) setFailed(e.message);
+  if (message.default) {
+    message.body = generateDefaultCommitMessageBody(repoFilesAction);
+    debug(`default commit message body set: '${message.body}'`);
   }
+
+  const resp: CreateCommitResponseType = await createCommit(
+    token,
+    repository.owner,
+    repository.repository,
+    branch,
+    message,
+    repoFilesAction,
+  );
+  debug(`commit response: ${JSON.stringify(resp)}`);
+  if (resp.data != null)
+    info(`commit success: ${resp.data.createCommitOnBranch.commit.url}`);
 }
 
-main();
+main().catch((e) => {
+  if (e instanceof Error) setFailed(e.message);
+});
