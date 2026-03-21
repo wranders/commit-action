@@ -1,6 +1,6 @@
 {
   "name": "commit-action",
-  "version": "0.0.0",
+  "version": "0.2.1",
   "description": "Commit files directly to a repository",
   "homepage": "https://www.doubleu.codes/commit-action",
   "bugs": {
