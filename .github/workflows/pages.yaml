@@ -3,6 +3,12 @@
 name: Pages
 on:
   workflow_dispatch:
+    inputs:
+      local_dev:
+        description: "Local development"
+        required: false
+        default: "false"
+        type: boolean
   push:
     tags:
     - "v[0-9]+.[0-9]+.[0-9]+"
@@ -16,10 +22,12 @@ jobs:
         out_path: out
         token: ${{ secrets.GITHUB_TOKEN }}
     - uses: actions/upload-pages-artifact@v4
+      if: ${{ !inputs.local_dev }}
       with:
         path: out
   deploy:
     needs: build
+    if: ${{ !inputs.local_dev }}
     runs-on: ubuntu-latest
     permissions:
       pages: write
